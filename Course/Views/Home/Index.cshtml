@@ -1,0 +1,18 @@
+﻿@using Course.ViewModel
+@model ServiceModel;
+<form asp-action="Index" asp-controller="Home" method="post">
+    <div class="form-group">
+        <label asp-for="MinimumCredits">MinimumCredits</label>
+        <input asp-for="MinimumCredits" class="form-control" name="MinimumCredits" required>
+    </div>
+    <div class="form-group">
+        <label asp-for="StartDate">Start Date</label>
+        <input asp-for =StartDate class="form-control" type="date" required>
+    </div>
+    <div class="form-group">
+        <label asp-for="EndDate">End Date</label>
+        <input asp-for=EndDate class="form-control" type="date" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>

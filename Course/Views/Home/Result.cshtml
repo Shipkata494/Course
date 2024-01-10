@@ -1,0 +1,19 @@
+﻿@using Course.ViewModel
+@model ICollection<StudentViewModel>
+@{
+    ViewData["Title"] = "Home Page";
+}
+@foreach (var item in Model)
+{
+    <p>Име : @item.Name</p>
+    <p>Тотални кредити : @item.TotalCredits</p>
+    foreach (var course in item.Courses)
+    {
+        <p>Име на курса: @course.CourseName</p>
+        <p>Кредити: @course.Credit</p>
+        <p>Време: @course.Time</p>
+        <p>Име на инструктора: @course.InstructorName</p>
+    }
+    <br />
+}
+
