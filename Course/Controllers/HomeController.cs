@@ -10,12 +10,8 @@ namespace Course.Controllers
     {
         private readonly IStudentService studentService;
 
-
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger, IStudentService _studentService)
+        public HomeController(IStudentService _studentService)
         {
-            _logger = logger;
             studentService = _studentService;
         }
 
@@ -27,17 +23,12 @@ namespace Course.Controllers
         [HttpPost]
         public IActionResult Index(ServiceModel model)
         {
-            return RedirectToAction("Res", model);
+            return RedirectToAction("Result", model);
         }
-        public async Task<IActionResult> Res(ServiceModel serviceModel)
+        public async Task<IActionResult> Result(ServiceModel serviceModel)
         {
-            var a = await studentService.GetStudentsAsync(serviceModel);
-            return RedirectToAction("Result", a);
-        }
-        public IActionResult Result(ICollection<StudentViewModel> viewModels)
-        {
-
-            return View(viewModels);
+            var viewModel = await studentService.GetStudentsAsync(serviceModel);
+            return View(viewModel);
         }
         public IActionResult Privacy()
         {

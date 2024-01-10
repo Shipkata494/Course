@@ -2,7 +2,6 @@
 using Course.Services.Interfaces;
 using Course.ViewModel;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Metadata.Ecma335;
 
 namespace Course.Services
 {
@@ -42,10 +41,12 @@ namespace Course.Services
                         Time = course.Course.TotalTime,
                         InstructorName = course.Course.Instructor.FirstName + " " + course.Course.Instructor.LastName,
                     };
-                    if (course.Course.TimeCreated > model.StartDate && course.Course.TimeCreated < model.EndDate)
+
+                    if (course.CompletionDate.HasValue &&
+                         course.CompletionDate.Value > DateOnly.FromDateTime(model.StartDate) &&
+                         course.CompletionDate.Value < DateOnly.FromDateTime(model.EndDate))
                     {
                     courseResult.Add(co);
-
                     }
                 }
                 var st = new StudentViewModel()
@@ -54,11 +55,13 @@ namespace Course.Services
                     Courses = courseResult,
                     TotalCredits = courseResult.Sum(c => c.Credit)
                 };
+                courseResult = new List<CourseViewModel>();
                 if (st.TotalCredits > model.MinimumCredits)
                 {
 
                 result.Add(st);
                 }
+               
             }
             return result;
         }
