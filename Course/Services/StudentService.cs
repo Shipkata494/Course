@@ -1,7 +1,10 @@
 ﻿using Course.Models;
 using Course.Services.Interfaces;
 using Course.ViewModel;
+using CsvHelper.Configuration;
+using CsvHelper;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 namespace Course.Services
 {
@@ -14,10 +17,43 @@ namespace Course.Services
             dbContext = _dbContext;
         }
 
-        public Task<CourseViewModel> GetCoursesByIdAsync()
+        public void SaveToCsv(string filePath, ICollection<StudentViewModel> studentsModel)
         {
-            throw new NotImplementedException();
+            using (var writer = new StreamWriter(filePath))
+            using (var csv = new CsvWriter(writer, new CsvConfiguration(CultureInfo.InvariantCulture)))
+            {
+                csv.WriteField("StudentName");
+                csv.WriteField("TotalCredits");
+                csv.WriteField("Courses");
+                csv.NextRecord();
+                foreach (var s in studentsModel)
+                {
+                    var courseResult = new List<CourseViewModel>();
+
+                    foreach (var c in s.Courses)
+                    {
+                        var course = new CourseViewModel()
+                        {
+                            CourseName = c.CourseName,
+                            Credit = c.Credit,
+                            InstructorName = c.InstructorName,
+                            Time = c.Time,
+                        };
+                        courseResult.Add(course);
+                    }
+
+                    csv.WriteRecord(new
+                    {
+                        StudentName = s.Name,
+                        TotalCredits = s.TotalCredits,
+                        Courses = string.Join(", ", courseResult.Select(course => $"{course.CourseName} ({course.Credit} credits) {course.InstructorName}"))
+                    });
+
+                    csv.NextRecord();
+                }
+            }
         }
+
         public async Task<ICollection<StudentViewModel>> GetStudentsAsync(ServiceModel model)
         {
             ICollection<StudentViewModel> result = new List<StudentViewModel>();
